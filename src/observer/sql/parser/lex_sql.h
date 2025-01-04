@@ -2,21 +2,21 @@
 #define yyHEADER_H 1
 #define yyIN_HEADER 1
 
-#line 5 "lex_sql.h"
+#line 6 "lex_sql.h"
 /*
-è¿™é‡Œçš„ä»£ç ä¼šè¢«å¤åˆ¶åˆ°lex_sql.cppçš„æœ€å¼€å§‹ä½ç½®
-å®šä¹‰yy_size_tçš„åŽŸå› æ˜¯å› ä¸ºflexç”Ÿæˆçš„ä»£ç ï¼Œä¼šä½¿ç”¨yy_size_tä¸Žå…¶ä»–ç±»åž‹çš„æ•°å­—
-åšæ¯”è¾ƒï¼Œå¯¼è‡´ç¼–è¯‘æŠ¥è­¦
+ÕâÀïµÄ´úÂë»á±»¸´ÖÆµ½lex_sql.cppµÄ×î¿ªÊ¼Î»ÖÃ
+¶¨Òåyy_size_tµÄÔ­ÒòÊÇÒòÎªflexÉú³ÉµÄ´úÂë£¬»áÊ¹ÓÃyy_size_tÓëÆäËûÀàÐÍµÄÊý×Ö
+×ö±È½Ï£¬µ¼ÖÂ±àÒë±¨¾¯
 */
 #define YY_TYPEDEF_YY_SIZE_T
 typedef int yy_size_t;
 
-/* å‚è€ƒç”Ÿæˆçš„lex_sql.cppä»£ç ï¼Œè¿™ä¸ªå®å®šä¹‰ä¼šæ”¾åœ¨æ¯æ¬¡è¿è¡Œyylex()æœ€å¼€å§‹çš„åœ°æ–¹ */
+/* ²Î¿¼Éú³ÉµÄlex_sql.cpp´úÂë£¬Õâ¸öºê¶¨Òå»á·ÅÔÚÃ¿´ÎÔËÐÐyylex()×î¿ªÊ¼µÄµØ·½ */
 #define YY_USER_INIT                                         \
   yycolumn = 0;
 
-/* å‚è€ƒç”Ÿæˆçš„lex_sql.cppä»£ç ï¼Œè¿™ä¸ªå®å®šä¹‰ä¼šæ”¾åœ¨è§£æžä¸€ä¸ªtokenä¹‹åŽï¼Œä¹Ÿå¯ä»¥åœ¨ç½‘ä¸Šæ‰¾åˆ°å¤§é‡çš„å‚è€ƒèµ„æ–™ */
-/* æˆ‘ä»¬åœ¨è¿™é‡Œè®¾ç½®å½“å‰è§£æžçš„tokençš„ä½ç½®ä¿¡æ¯ï¼Œè¿™æ ·åœ¨yaccä¸­å°±å¯ä»¥ä½¿ç”¨è¿™äº›ä¿¡æ¯äº† */
+/* ²Î¿¼Éú³ÉµÄlex_sql.cpp´úÂë£¬Õâ¸öºê¶¨Òå»á·ÅÔÚ½âÎöÒ»¸ötokenÖ®ºó£¬Ò²¿ÉÒÔÔÚÍøÉÏÕÒµ½´óÁ¿µÄ²Î¿¼×ÊÁÏ */
+/* ÎÒÃÇÔÚÕâÀïÉèÖÃµ±Ç°½âÎöµÄtokenµÄÎ»ÖÃÐÅÏ¢£¬ÕâÑùÔÚyaccÖÐ¾Í¿ÉÒÔÊ¹ÓÃÕâÐ©ÐÅÏ¢ÁË */
 #define YY_USER_ACTION                                       \
 do {                                                         \
   yylloc->first_line   = yylloc->last_line = yylineno;       \
@@ -26,7 +26,7 @@ do {                                                         \
 }                                                            \
 while (0);
 
-#line 29 "lex_sql.h"
+#line 30 "lex_sql.h"
 
 #define  YY_INT_ALIGNED short int
 
@@ -97,7 +97,6 @@ typedef int16_t flex_int16_t;
 typedef uint16_t flex_uint16_t;
 typedef int32_t flex_int32_t;
 typedef uint32_t flex_uint32_t;
-typedef uint64_t flex_uint64_t;
 #else
 typedef signed char flex_int8_t;
 typedef short int flex_int16_t;
@@ -211,7 +210,7 @@ struct yy_buffer_state
 	/* Number of characters read into yy_ch_buf, not including EOB
 	 * characters.
 	 */
-	yy_size_t yy_n_chars;
+	int yy_n_chars;
 
 	/* Whether we "own" the buffer - i.e., we know we created it,
 	 * and can realloc() it to grow it, and should free() it to
@@ -255,7 +254,7 @@ void yypop_buffer_state ( yyscan_t yyscanner );
 
 YY_BUFFER_STATE yy_scan_buffer ( char *base, yy_size_t size , yyscan_t yyscanner );
 YY_BUFFER_STATE yy_scan_string ( const char *yy_str , yyscan_t yyscanner );
-YY_BUFFER_STATE yy_scan_bytes ( const char *bytes, yy_size_t len , yyscan_t yyscanner );
+YY_BUFFER_STATE yy_scan_bytes ( const char *bytes, int len , yyscan_t yyscanner );
 
 void *yyalloc ( yy_size_t , yyscan_t yyscanner );
 void *yyrealloc ( void *, yy_size_t , yyscan_t yyscanner );
@@ -311,7 +310,7 @@ FILE *yyget_out ( yyscan_t yyscanner );
 
 void yyset_out  ( FILE * _out_str , yyscan_t yyscanner );
 
-			yy_size_t yyget_leng ( yyscan_t yyscanner );
+			int yyget_leng ( yyscan_t yyscanner );
 
 char *yyget_text ( yyscan_t yyscanner );
 
@@ -542,7 +541,7 @@ extern int yylex \
 #undef yyTABLES_NAME
 #endif
 
-#line 138 "lex_sql.l"
+#line 140 "lex_sql.l"
 
 
 #line 548 "lex_sql.h"
