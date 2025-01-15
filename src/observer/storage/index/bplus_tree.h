@@ -30,12 +30,12 @@ See the Mulan PSL v2 for more details. */
 #include "common/log/log.h"
 
 /**
- * @brief B+æ ‘çš„å®ç°
+ * @brief B+Ê÷µÄÊµÏÖ
  * @defgroup BPlusTree
  */
 
 /**
- * @brief B+æ ‘çš„æ“ä½œç±»å‹
+ * @brief B+Ê÷µÄ²Ù×÷ÀàĞÍ
  * @ingroup BPlusTree
  */
 enum class BplusTreeOperationType
@@ -46,7 +46,7 @@ enum class BplusTreeOperationType
 };
 
 /**
- * @brief å±æ€§æ¯”è¾ƒ(BplusTree)
+ * @brief ÊôĞÔ±È½Ï(BplusTree)
  * @ingroup BPlusTree
  */
 class AttrComparator 
@@ -66,7 +66,8 @@ public:
   int operator()(const char *v1, const char *v2) const
   {
     switch (attr_type_) {
-      case INTS: {
+      case INTS: 
+      case DATES: {
         return common::compare_int((void *)v1, (void *)v2);
       } break;
       case FLOATS: {
@@ -88,8 +89,8 @@ private:
 };
 
 /**
- * @brief é”®å€¼æ¯”è¾ƒ(BplusTree)
- * @details BplusTreeçš„é”®å€¼é™¤äº†å­—æ®µå±æ€§ï¼Œè¿˜æœ‰RIDï¼Œæ˜¯ä¸ºäº†é¿å…å±æ€§å€¼é‡å¤è€Œå¢åŠ çš„ã€‚
+ * @brief ¼üÖµ±È½Ï(BplusTree)
+ * @details BplusTreeµÄ¼üÖµ³ıÁË×Ö¶ÎÊôĞÔ£¬»¹ÓĞRID£¬ÊÇÎªÁË±ÜÃâÊôĞÔÖµÖØ¸´¶øÔö¼ÓµÄ¡£
  * @ingroup BPlusTree
  */
 class KeyComparator 
@@ -122,7 +123,7 @@ private:
 };
 
 /**
- * @brief å±æ€§æ‰“å°,è°ƒè¯•ä½¿ç”¨(BplusTree)
+ * @brief ÊôĞÔ´òÓ¡,µ÷ÊÔÊ¹ÓÃ(BplusTree)
  * @ingroup BPlusTree
  */
 class AttrPrinter 
@@ -143,6 +144,9 @@ public:
   {
     switch (attr_type_) {
       case INTS: {
+        return std::to_string(*(int *)v);
+      } break;
+      case DATES : {
         return std::to_string(*(int *)v);
       } break;
       case FLOATS: {
@@ -171,7 +175,7 @@ private:
 };
 
 /**
- * @brief é”®å€¼æ‰“å°,è°ƒè¯•ä½¿ç”¨(BplusTree)
+ * @brief ¼üÖµ´òÓ¡,µ÷ÊÔÊ¹ÓÃ(BplusTree)
  * @ingroup BPlusTree
  */
 class KeyPrinter 
@@ -214,12 +218,12 @@ struct IndexFileHeader
     memset(this, 0, sizeof(IndexFileHeader));
     root_page = BP_INVALID_PAGE_NUM;
   }
-  PageNum root_page;          ///< æ ¹èŠ‚ç‚¹åœ¨ç£ç›˜ä¸­çš„é¡µå·
-  int32_t internal_max_size;  ///< å†…éƒ¨èŠ‚ç‚¹æœ€å¤§çš„é”®å€¼å¯¹æ•°
-  int32_t leaf_max_size;      ///< å¶å­èŠ‚ç‚¹æœ€å¤§çš„é”®å€¼å¯¹æ•°
-  int32_t attr_length;        ///< é”®å€¼çš„é•¿åº¦
+  PageNum root_page;          ///< ¸ù½ÚµãÔÚ´ÅÅÌÖĞµÄÒ³ºÅ
+  int32_t internal_max_size;  ///< ÄÚ²¿½Úµã×î´óµÄ¼üÖµ¶ÔÊı
+  int32_t leaf_max_size;      ///< Ò¶×Ó½Úµã×î´óµÄ¼üÖµ¶ÔÊı
+  int32_t attr_length;        ///< ¼üÖµµÄ³¤¶È
   int32_t key_length;         ///< attr length + sizeof(RID)
-  AttrType attr_type;         ///< é”®å€¼çš„ç±»å‹
+  AttrType attr_type;         ///< ¼üÖµµÄÀàĞÍ
 
   const std::string to_string()
   {
@@ -299,10 +303,10 @@ struct InternalIndexNode : public IndexNode
 };
 
 /**
- * @brief IndexNode ä»…ä½œä¸ºæ•°æ®åœ¨å†…å­˜æˆ–ç£ç›˜ä¸­çš„è¡¨ç¤º
+ * @brief IndexNode ½ö×÷ÎªÊı¾İÔÚÄÚ´æ»ò´ÅÅÌÖĞµÄ±íÊ¾
  * @ingroup BPlusTree
- * IndexNodeHandler è´Ÿè´£å¯¹IndexNodeåšå„ç§æ“ä½œã€‚
- * ä½œä¸ºä¸€ä¸ªç±»æ¥è¯´ï¼Œè™šå‡½æ•°ä¼šå½±å“â€œç»“æ„ä½“â€çœŸå®çš„å†…å­˜å¸ƒå±€ï¼Œæ‰€ä»¥å°†æ•°æ®å­˜å‚¨ä¸æ“ä½œåˆ†å¼€
+ * IndexNodeHandler ¸ºÔğ¶ÔIndexNode×ö¸÷ÖÖ²Ù×÷¡£
+ * ×÷ÎªÒ»¸öÀàÀ´Ëµ£¬Ğéº¯Êı»áÓ°Ïì¡°½á¹¹Ìå¡±ÕæÊµµÄÄÚ´æ²¼¾Ö£¬ËùÒÔ½«Êı¾İ´æ´¢Óë²Ù×÷·Ö¿ª
  */
 class IndexNodeHandler 
 {
@@ -338,7 +342,7 @@ protected:
 };
 
 /**
- * @brief å¶å­èŠ‚ç‚¹çš„æ“ä½œ
+ * @brief Ò¶×Ó½ÚµãµÄ²Ù×÷
  * @ingroup BPlusTree
  */
 class LeafIndexNodeHandler : public IndexNodeHandler 
@@ -355,8 +359,8 @@ public:
   char *value_at(int index);
 
   /**
-   * æŸ¥æ‰¾æŒ‡å®škeyçš„æ’å…¥ä½ç½®(æ³¨æ„ä¸æ˜¯keyæœ¬èº«)
-   * å¦‚æœkeyå·²ç»å­˜åœ¨ï¼Œä¼šè®¾ç½®foundçš„å€¼ã€‚
+   * ²éÕÒÖ¸¶¨keyµÄ²åÈëÎ»ÖÃ(×¢Òâ²»ÊÇkey±¾Éí)
+   * Èç¹ûkeyÒÑ¾­´æÔÚ£¬»áÉèÖÃfoundµÄÖµ¡£
    */
   int lookup(const KeyComparator &comparator, const char *key, bool *found = nullptr) const;
 
@@ -388,7 +392,7 @@ private:
 };
 
 /**
- * @brief å†…éƒ¨èŠ‚ç‚¹çš„æ“ä½œ
+ * @brief ÄÚ²¿½ÚµãµÄ²Ù×÷
  * @ingroup BPlusTree
  */
 class InternalIndexNodeHandler : public IndexNodeHandler 
@@ -406,19 +410,19 @@ public:
   PageNum value_at(int index);
 
   /**
-   * è¿”å›æŒ‡å®šå­èŠ‚ç‚¹åœ¨å½“å‰èŠ‚ç‚¹ä¸­çš„ç´¢å¼•
+   * ·µ»ØÖ¸¶¨×Ó½ÚµãÔÚµ±Ç°½ÚµãÖĞµÄË÷Òı
    */
   int value_index(PageNum page_num);
   void set_key_at(int index, const char *key);
   void remove(int index);
 
   /**
-   * ä¸LeafèŠ‚ç‚¹ä¸åŒï¼Œlookupè¿”å›æŒ‡å®škeyåº”è¯¥å±äºå“ªä¸ªå­èŠ‚ç‚¹ï¼Œè¿”å›è¿™ä¸ªå­èŠ‚ç‚¹åœ¨å½“å‰èŠ‚ç‚¹ä¸­çš„ç´¢å¼•
-   * å¦‚æœæƒ³è¦è¿”å›æ’å…¥ä½ç½®ï¼Œå°±æä¾› `insert_position` å‚æ•°
-   * @param[in] comparator ç”¨äºé”®å€¼æ¯”è¾ƒçš„å‡½æ•°
-   * @param[in] key æŸ¥æ‰¾çš„é”®å€¼
-   * @param[out] found å¦‚æœæ˜¯æœ‰æ•ˆæŒ‡é’ˆï¼Œå°†ä¼šè¿”å›å½“å‰æ˜¯å¦å­˜åœ¨æŒ‡å®šçš„é”®å€¼
-   * @param[out] insert_position å¦‚æœæ˜¯æœ‰æ•ˆæŒ‡é’ˆï¼Œå°†ä¼šè¿”å›å¯ä»¥æ’å…¥æŒ‡å®šé”®å€¼çš„ä½ç½®
+   * ÓëLeaf½Úµã²»Í¬£¬lookup·µ»ØÖ¸¶¨keyÓ¦¸ÃÊôÓÚÄÄ¸ö×Ó½Úµã£¬·µ»ØÕâ¸ö×Ó½ÚµãÔÚµ±Ç°½ÚµãÖĞµÄË÷Òı
+   * Èç¹ûÏëÒª·µ»Ø²åÈëÎ»ÖÃ£¬¾ÍÌá¹© `insert_position` ²ÎÊı
+   * @param[in] comparator ÓÃÓÚ¼üÖµ±È½ÏµÄº¯Êı
+   * @param[in] key ²éÕÒµÄ¼üÖµ
+   * @param[out] found Èç¹ûÊÇÓĞĞ§Ö¸Õë£¬½«»á·µ»Øµ±Ç°ÊÇ·ñ´æÔÚÖ¸¶¨µÄ¼üÖµ
+   * @param[out] insert_position Èç¹ûÊÇÓĞĞ§Ö¸Õë£¬½«»á·µ»Ø¿ÉÒÔ²åÈëÖ¸¶¨¼üÖµµÄÎ»ÖÃ
    */
   int lookup(const KeyComparator &comparator, 
              const char *key, 
@@ -452,15 +456,15 @@ private:
 };
 
 /**
- * @brief B+æ ‘çš„å®ç°
+ * @brief B+Ê÷µÄÊµÏÖ
  * @ingroup BPlusTree
  */
 class BplusTreeHandler 
 {
 public:
   /**
-   * æ­¤å‡½æ•°åˆ›å»ºä¸€ä¸ªåä¸ºfileNameçš„ç´¢å¼•ã€‚
-   * attrTypeæè¿°è¢«ç´¢å¼•å±æ€§çš„ç±»å‹ï¼ŒattrLengthæè¿°è¢«ç´¢å¼•å±æ€§çš„é•¿åº¦
+   * ´Ëº¯Êı´´½¨Ò»¸öÃûÎªfileNameµÄË÷Òı¡£
+   * attrTypeÃèÊö±»Ë÷ÒıÊôĞÔµÄÀàĞÍ£¬attrLengthÃèÊö±»Ë÷ÒıÊôĞÔµÄ³¤¶È
    */
   RC create(const char *file_name, 
             AttrType attr_type, 
@@ -469,38 +473,38 @@ public:
             int leaf_max_size = -1);
 
   /**
-   * æ‰“å¼€åä¸ºfileNameçš„ç´¢å¼•æ–‡ä»¶ã€‚
-   * å¦‚æœæ–¹æ³•è°ƒç”¨æˆåŠŸï¼Œåˆ™indexHandleä¸ºæŒ‡å‘è¢«æ‰“å¼€çš„ç´¢å¼•å¥æŸ„çš„æŒ‡é’ˆã€‚
-   * ç´¢å¼•å¥æŸ„ç”¨äºåœ¨ç´¢å¼•ä¸­æ’å…¥æˆ–åˆ é™¤ç´¢å¼•é¡¹ï¼Œä¹Ÿå¯ç”¨äºç´¢å¼•çš„æ‰«æ
+   * ´ò¿ªÃûÎªfileNameµÄË÷ÒıÎÄ¼ş¡£
+   * Èç¹û·½·¨µ÷ÓÃ³É¹¦£¬ÔòindexHandleÎªÖ¸Ïò±»´ò¿ªµÄË÷Òı¾ä±úµÄÖ¸Õë¡£
+   * Ë÷Òı¾ä±úÓÃÓÚÔÚË÷ÒıÖĞ²åÈë»òÉ¾³ıË÷ÒıÏî£¬Ò²¿ÉÓÃÓÚË÷ÒıµÄÉ¨Ãè
    */
   RC open(const char *file_name);
 
   /**
-   * å…³é—­å¥æŸ„indexHandleå¯¹åº”çš„ç´¢å¼•æ–‡ä»¶
+   * ¹Ø±Õ¾ä±úindexHandle¶ÔÓ¦µÄË÷ÒıÎÄ¼ş
    */
   RC close();
 
   /**
-   * æ­¤å‡½æ•°å‘IndexHandleå¯¹åº”çš„ç´¢å¼•ä¸­æ’å…¥ä¸€ä¸ªç´¢å¼•é¡¹ã€‚
-   * å‚æ•°user_keyæŒ‡å‘è¦æ’å…¥çš„å±æ€§å€¼ï¼Œå‚æ•°ridæ ‡è¯†è¯¥ç´¢å¼•é¡¹å¯¹åº”çš„å…ƒç»„ï¼Œ
-   * å³å‘ç´¢å¼•ä¸­æ’å…¥ä¸€ä¸ªå€¼ä¸ºï¼ˆuser_keyï¼Œridï¼‰çš„é”®å€¼å¯¹
-   * @note è¿™é‡Œå‡è®¾user_keyçš„å†…å­˜å¤§å°ä¸attr_length ä¸€è‡´
+   * ´Ëº¯ÊıÏòIndexHandle¶ÔÓ¦µÄË÷ÒıÖĞ²åÈëÒ»¸öË÷ÒıÏî¡£
+   * ²ÎÊıuser_keyÖ¸ÏòÒª²åÈëµÄÊôĞÔÖµ£¬²ÎÊırid±êÊ¶¸ÃË÷ÒıÏî¶ÔÓ¦µÄÔª×é£¬
+   * ¼´ÏòË÷ÒıÖĞ²åÈëÒ»¸öÖµÎª£¨user_key£¬rid£©µÄ¼üÖµ¶Ô
+   * @note ÕâÀï¼ÙÉèuser_keyµÄÄÚ´æ´óĞ¡Óëattr_length Ò»ÖÂ
    */
   RC insert_entry(const char *user_key, const RID *rid);
 
   /**
-   * ä»IndexHandleå¥æŸ„å¯¹åº”çš„ç´¢å¼•ä¸­åˆ é™¤ä¸€ä¸ªå€¼ä¸ºï¼ˆ*pDataï¼Œridï¼‰çš„ç´¢å¼•é¡¹
-   * @return RECORD_INVALID_KEY æŒ‡å®šå€¼ä¸å­˜åœ¨
-   * @note è¿™é‡Œå‡è®¾user_keyçš„å†…å­˜å¤§å°ä¸attr_length ä¸€è‡´
+   * ´ÓIndexHandle¾ä±ú¶ÔÓ¦µÄË÷ÒıÖĞÉ¾³ıÒ»¸öÖµÎª£¨*pData£¬rid£©µÄË÷ÒıÏî
+   * @return RECORD_INVALID_KEY Ö¸¶¨Öµ²»´æÔÚ
+   * @note ÕâÀï¼ÙÉèuser_keyµÄÄÚ´æ´óĞ¡Óëattr_length Ò»ÖÂ
    */
   RC delete_entry(const char *user_key, const RID *rid);
 
   bool is_empty() const;
 
   /**
-   * è·å–æŒ‡å®šå€¼çš„record
-   * @param key_len user_keyçš„é•¿åº¦
-   * @param rid  è¿”å›å€¼ï¼Œè®°å½•è®°å½•æ‰€åœ¨çš„é¡µé¢å·å’Œslot
+   * »ñÈ¡Ö¸¶¨ÖµµÄrecord
+   * @param key_len user_keyµÄ³¤¶È
+   * @param rid  ·µ»ØÖµ£¬¼ÇÂ¼¼ÇÂ¼ËùÔÚµÄÒ³ÃæºÅºÍslot
    */
   RC get_entry(const char *user_key, int key_len, std::list<RID> &rids);
 
@@ -515,14 +519,14 @@ public:
 
 public:
   /**
-   * è¿™äº›å‡½æ•°éƒ½æ˜¯çº¿ç¨‹ä¸å®‰å…¨çš„ï¼Œä¸è¦åœ¨å¤šçº¿ç¨‹çš„ç¯å¢ƒä¸‹è°ƒç”¨
+   * ÕâĞ©º¯Êı¶¼ÊÇÏß³Ì²»°²È«µÄ£¬²»ÒªÔÚ¶àÏß³ÌµÄ»·¾³ÏÂµ÷ÓÃ
    */
   RC print_tree();
   RC print_leafs();
 
 private:
   /**
-   * è¿™äº›å‡½æ•°éƒ½æ˜¯çº¿ç¨‹ä¸å®‰å…¨çš„ï¼Œä¸è¦åœ¨å¤šçº¿ç¨‹çš„ç¯å¢ƒä¸‹è°ƒç”¨
+   * ÕâĞ©º¯Êı¶¼ÊÇÏß³Ì²»°²È«µÄ£¬²»ÒªÔÚ¶àÏß³ÌµÄ»·¾³ÏÂµ÷ÓÃ
    */
   RC print_leaf(Frame *frame);
   RC print_internal_node_recursive(Frame *frame);
@@ -571,8 +575,8 @@ protected:
   bool            header_dirty_ = false; // 
   IndexFileHeader file_header_;
 
-  // åœ¨è°ƒæ•´æ ¹èŠ‚ç‚¹æ—¶ï¼Œéœ€è¦åŠ ä¸Šè¿™ä¸ªé”ã€‚
-  // è¿™ä¸ªé”å¯ä»¥ä½¿ç”¨é€’å½’è¯»å†™é”ï¼Œä½†æ˜¯è¿™é‡Œå·æ‡’å…ˆä¸æ”¹
+  // ÔÚµ÷Õû¸ù½ÚµãÊ±£¬ĞèÒª¼ÓÉÏÕâ¸öËø¡£
+  // Õâ¸öËø¿ÉÒÔÊ¹ÓÃµİ¹é¶ÁĞ´Ëø£¬µ«ÊÇÕâÀïÍµÀÁÏÈ²»¸Ä
   common::SharedMutex   root_lock_;
 
   KeyComparator   key_comparator_;
@@ -586,7 +590,7 @@ private:
 };
 
 /**
- * @brief B+æ ‘çš„æ‰«æå™¨
+ * @brief B+Ê÷µÄÉ¨ÃèÆ÷
  * @ingroup BPlusTree
  */
 class BplusTreeScanner 
@@ -596,13 +600,13 @@ public:
   ~BplusTreeScanner();
 
   /**
-   * @brief æ‰«ææŒ‡å®šèŒƒå›´çš„æ•°æ®
-   * @param left_user_key æ‰«æèŒƒå›´çš„å·¦è¾¹ç•Œï¼Œå¦‚æœæ˜¯nullï¼Œåˆ™æ²¡æœ‰å·¦è¾¹ç•Œ
-   * @param left_len left_user_key çš„å†…å­˜å¤§å°(åªæœ‰åœ¨å˜é•¿å­—æ®µä¸­æ‰ä¼šå…³æ³¨)
-   * @param left_inclusive å·¦è¾¹ç•Œçš„å€¼æ˜¯å¦åŒ…å«åœ¨å†…
-   * @param right_user_key æ‰«æèŒƒå›´çš„å³è¾¹ç•Œã€‚å¦‚æœæ˜¯nullï¼Œåˆ™æ²¡æœ‰å³è¾¹ç•Œ
-   * @param right_len right_user_key çš„å†…å­˜å¤§å°(åªæœ‰åœ¨å˜é•¿å­—æ®µä¸­æ‰ä¼šå…³æ³¨)
-   * @param right_inclusive å³è¾¹ç•Œçš„å€¼æ˜¯å¦åŒ…å«åœ¨å†…
+   * @brief É¨ÃèÖ¸¶¨·¶Î§µÄÊı¾İ
+   * @param left_user_key É¨Ãè·¶Î§µÄ×ó±ß½ç£¬Èç¹ûÊÇnull£¬ÔòÃ»ÓĞ×ó±ß½ç
+   * @param left_len left_user_key µÄÄÚ´æ´óĞ¡(Ö»ÓĞÔÚ±ä³¤×Ö¶ÎÖĞ²Å»á¹Ø×¢)
+   * @param left_inclusive ×ó±ß½çµÄÖµÊÇ·ñ°üº¬ÔÚÄÚ
+   * @param right_user_key É¨Ãè·¶Î§µÄÓÒ±ß½ç¡£Èç¹ûÊÇnull£¬ÔòÃ»ÓĞÓÒ±ß½ç
+   * @param right_len right_user_key µÄÄÚ´æ´óĞ¡(Ö»ÓĞÔÚ±ä³¤×Ö¶ÎÖĞ²Å»á¹Ø×¢)
+   * @param right_inclusive ÓÒ±ß½çµÄÖµÊÇ·ñ°üº¬ÔÚÄÚ
    */
   RC open(const char *left_user_key, int left_len, bool left_inclusive, 
           const char *right_user_key, int right_len, bool right_inclusive);
@@ -613,7 +617,7 @@ public:
 
 private:
   /**
-   * å¦‚æœkeyçš„ç±»å‹æ˜¯CHARS, æ‰©å±•æˆ–ç¼©å‡user_keyçš„å¤§å°åˆšå¥½æ˜¯schemaä¸­å®šä¹‰çš„å¤§å°
+   * Èç¹ûkeyµÄÀàĞÍÊÇCHARS, À©Õ¹»òËõ¼õuser_keyµÄ´óĞ¡¸ÕºÃÊÇschemaÖĞ¶¨ÒåµÄ´óĞ¡
    */
   RC fix_user_key(const char *user_key, int key_len, bool want_greater, char **fixed_key, bool *should_inclusive);
 
@@ -626,8 +630,8 @@ private:
 
   LatchMemo latch_memo_;
 
-  /// ä½¿ç”¨å·¦å³å¶å­èŠ‚ç‚¹å’Œä½ç½®æ¥è¡¨ç¤ºæ‰«æçš„èµ·å§‹ä½ç½®å’Œç»ˆæ­¢ä½ç½®
-  /// èµ·å§‹ä½ç½®å’Œç»ˆæ­¢ä½ç½®éƒ½æ˜¯æœ‰æ•ˆçš„æ•°æ®
+  /// Ê¹ÓÃ×óÓÒÒ¶×Ó½ÚµãºÍÎ»ÖÃÀ´±íÊ¾É¨ÃèµÄÆğÊ¼Î»ÖÃºÍÖÕÖ¹Î»ÖÃ
+  /// ÆğÊ¼Î»ÖÃºÍÖÕÖ¹Î»ÖÃ¶¼ÊÇÓĞĞ§µÄÊı¾İ
   Frame *current_frame_ = nullptr;
 
   common::MemPoolItem::unique_ptr right_key_;
