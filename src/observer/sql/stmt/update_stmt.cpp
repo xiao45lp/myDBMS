@@ -16,7 +16,6 @@ See the Mulan PSL v2 for more details. */
 #include "common/log/log.h"
 #include "storage/db/db.h"
 #include "storage/table/table.h"
-
 UpdateStmt::UpdateStmt(Table *table, const Value *values, int value_amount,FieldMeta field,FilterStmt * filter_stmt)
     : table_(table), values_(values), value_amount_(value_amount),filter_stmt_(filter_stmt)
 {
@@ -34,7 +33,7 @@ UpdateStmt::~UpdateStmt()
 RC UpdateStmt::create(Db *db, const UpdateSqlNode &update, Stmt *&stmt)
 {
   // TODO
-  const char *table_name = update.relation_name.c_str();
+    const char *table_name = update.relation_name.c_str();
   if (nullptr == db || nullptr == table_name) {
     LOG_WARN("invalid argument. db=%p, table_name=%p",db, table_name);
     return RC::INVALID_ARGUMENT;
@@ -49,8 +48,8 @@ RC UpdateStmt::create(Db *db, const UpdateSqlNode &update, Stmt *&stmt)
   // update t1 set c1 = 1;
   const TableMeta &table_meta = table->table_meta();
   const int sys_field_num = table_meta.sys_field_num();
-   //1.¼ì²é ±ít1 ÓĞÃ»ÓĞc1 ÁĞ
-   //2.¼ì²é c1 ÁĞµÄÀàĞÍ Óë 1 ÊÇ·ñÆ¥Åä
+   //1.æ£€æŸ¥ è¡¨t1 æœ‰æ²¡æœ‰c1 åˆ—
+   //2.æ£€æŸ¥ c1 åˆ—çš„ç±»å‹ ä¸ 1 æ˜¯å¦åŒ¹é…
   const std::vector<FieldMeta>* fieldMeta = table_meta.field_metas();
   bool valid = false;
   FieldMeta update_field;

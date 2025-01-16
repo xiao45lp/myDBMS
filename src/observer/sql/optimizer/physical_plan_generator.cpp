@@ -75,7 +75,7 @@ RC PhysicalPlanGenerator::create(LogicalOperator &logical_operator, unique_ptr<P
     case LogicalOperatorType::JOIN: {
       return create_plan(static_cast<JoinLogicalOperator &>(logical_operator), oper);
     } break;
-    
+
     case LogicalOperatorType::UPDATE: {
       return create_plan(static_cast<UpdateLogicalOperator &>(logical_operator), oper);
     } break;

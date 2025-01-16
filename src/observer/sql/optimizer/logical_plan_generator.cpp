@@ -65,7 +65,7 @@ RC LogicalPlanGenerator::create(Stmt *stmt, unique_ptr<LogicalOperator> &logical
       ExplainStmt *explain_stmt = static_cast<ExplainStmt *>(stmt);
       rc = create_plan(explain_stmt, logical_operator);
     } break;
-    
+
     case StmtType::UPDATE: {
       UpdateStmt *update_stmt = static_cast<UpdateStmt *>(stmt);
       rc = create_plan(update_stmt, logical_operator);

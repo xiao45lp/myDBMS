@@ -80,7 +80,7 @@ public:
   RC visit_record(const RID &rid, bool readonly, std::function<void(Record &)> visitor);
   RC get_record(const RID &rid, Record &record);
 
-  //将该record的attr_name列更新为 value
+  //灏嗚record鐨刟ttr_name鍒楁洿鏂颁负 value
   RC update_record(Record &record ,const char* attr_name,Value * value);
   
   RC recover_insert_record(Record &record);
@@ -102,10 +102,13 @@ public:
   const TableMeta &table_meta() const;
 
   RC sync();
+  RC drop(const char *dir);
 
 private:
   RC insert_entry_of_indexes(const char *record, const RID &rid);
   RC delete_entry_of_indexes(const char *record, const RID &rid, bool error_on_not_exists);
+
+
 
 private:
   RC init_record_handler(const char *base_dir);

@@ -1664,7 +1664,7 @@ yyreduce:
   case 23:
 #line 208 "yacc_sql.y"
          {
-      (void)yynerrs;  // 这么写为了消除yynerrs未使用的告警。如果你有更好的方法欢迎提PR
+      (void)yynerrs;  // 杩欎箞鍐欎负浜嗘秷闄ynerrs鏈娇鐢ㄧ殑鍛婅銆傚鏋滀綘鏈夋洿濂界殑鏂规硶娆㈣繋鎻怭R
       (yyval.sql_node) = new ParsedSqlNode(SCF_EXIT);
     }
 #line 1671 "yacc_sql.cpp"
