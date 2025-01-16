@@ -167,9 +167,9 @@ public:
   RC insert_record(const char *data, RID *rid);
 
   /**
-   * @brief ¸üĞÂÒ»Ìõ¼ÇÂ¼
+   * @brief æ›´æ–°ä¸€æ¡è®°å½•
    *
-   * @param rec Òª¸üĞÂµÄ¼ÇÂ¼
+   * @param rec è¦æ›´æ–°çš„è®°å½•
    */
 
   RC update_record(Record *rec);
@@ -283,9 +283,9 @@ public:
   RC insert_record(const char *data, int record_size, RID *rid);
 
   /**
-   * @brief ¸üĞÂÒ»Ìõ¼ÇÂ¼
+   * @brief æ›´æ–°ä¸€æ¡è®°å½•
    *
-   * @param data Òª¸üĞÂµÄ¼ÇÂ¼
+   * @param data è¦æ›´æ–°çš„è®°å½•
    */
 
   RC update_record(Record *rec);

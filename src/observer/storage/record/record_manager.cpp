@@ -212,7 +212,7 @@ RC RecordPageHandler::update_record(Record *rec)
 {
   ASSERT(readonly_ == false, "cannot update record into page while the page is readonly");
 
-  //1.ºÏ·¨ÐÔ¼ì²é
+  //1.åˆæ³•æ€§æ£€æŸ¥
   if(rec->rid().slot_num >= page_header_->record_capacity)
   {
     LOG_ERROR(
@@ -224,8 +224,8 @@ RC RecordPageHandler::update_record(Record *rec)
     LOG_ERROR("Invalid slot_num %d, slot is empty, page_num %d.", rec->rid().slot_num, frame_->page_num());
     return RC::RECORD_RECORD_NOT_EXIST;
   }
-  //2.¸üÐÂrecord
-  char *record_data = get_record_data(rec->rid().slot_num);//µ±Ç°Ö¸ÕëÖ¸ÏòframeÖÐ
+  //2.æ›´æ–°record
+  char *record_data = get_record_data(rec->rid().slot_num);//å½“å‰æŒ‡é’ˆæŒ‡å‘frameä¸­
   memcpy(record_data, rec->data(), page_header_->record_real_size);
   bitmap.set_bit(rec->rid().slot_num);
   frame_->mark_dirty();
