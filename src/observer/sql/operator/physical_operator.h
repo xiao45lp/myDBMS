@@ -47,7 +47,6 @@ enum class PhysicalOperatorType
   STRING_LIST,
   DELETE,
   INSERT,
-  UPDATE,
 };
 
 /**
